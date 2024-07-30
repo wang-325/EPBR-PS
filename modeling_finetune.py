@@ -81,7 +81,7 @@ class DoubleFusionAttention(nn.Module):
         self.proj_drop = nn.Dropout(proj_drop)
 
 
-        # gc
+        # local attention
         self.bias = nn.Parameter(torch.zeros(dim))
         self.conv_k = nn.Conv2d(in_channels=dim, out_channels=1, kernel_size=1, stride=1, padding=0, bias=False)
         self.conv_v = nn.Conv2d(in_channels=dim, out_channels=dim, kernel_size=1, stride=1, padding=0, bias=False)
