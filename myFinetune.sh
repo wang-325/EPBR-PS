@@ -26,7 +26,7 @@ python  run_class_finetuning.py \
     --lr 1e-3\
     --opt_betas 0.9 0.999 \
     --weight_decay 0.05 \
-    --epochs 200 \
+    --epochs 100 \
     --dist_eval \
     --test_num_segment 5 \
     --test_num_crop 3 \
