@@ -56,7 +56,7 @@ class Mlp(nn.Module):
         return x
 
 
-class EpbrAttention(nn.Module):
+class DoubleFusionAttention(nn.Module):
     def __init__(
             self, dim, num_heads=8, qkv_bias=False, qk_scale=None, attn_drop=0.,
             proj_drop=0., attn_head_dim=None):
@@ -92,13 +92,13 @@ class EpbrAttention(nn.Module):
 
     def forward(self, x):
         x_conv = x.permute(2, 1, 0)
-        conv_k = self.conv_k(x_conv).permute(2, 0, 1)  # 4 1568 1
+        conv_k = self.conv_k(x_conv).permute(2, 0, 1)  
         conv_q = self.conv_k(x_conv).permute(2, 1, 0)
-        mul_qk = torch.matmul(conv_q, conv_k)  # 4 1568 1568
+        mul_qk = torch.matmul(conv_q, conv_k)  
         conv_k = self.softmax_k(mul_qk)
 
         conv_v = x_conv.permute(2, 1, 0)
-        mul_vk = torch.matmul(conv_k, conv_v).permute(2, 1, 0)  # 768 b 1
+        mul_vk = torch.matmul(conv_k, conv_v).permute(2, 1, 0)  
         conv_v = self.conv(mul_vk).permute(1, 2, 0)
         conv_v = self.conv(self.relu(self.norm(conv_v)).permute(2, 1, 0))
         x_gc = conv_v.permute(1, 2, 0).contiguous()
@@ -135,7 +135,7 @@ class EpbrBlock(nn.Module):
                  attn_head_dim=None):
         super().__init__()
         self.norm1 = norm_layer(dim)
-        self.attn =  EpbrAttention(
+        self.attn =  DoubleFusionAttention(
             dim, num_heads=num_heads, qkv_bias=qkv_bias, qk_scale=qk_scale,
             attn_drop=attn_drop, proj_drop=drop, attn_head_dim=attn_head_dim)
         # NOTE: drop path for stochastic depth, we shall see if this is better than dropout here
